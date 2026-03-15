@@ -1,17 +1,22 @@
 package main
 
-import(
+import (
 	"fmt"
 	"os"
+	"uDocker/src"
 )
 
-func main(){
+func main() {
 	args := os.Args
-	switch args[1]{
+	switch args[1] {
 	case "run":
-		//iterate through args[3:] and passs them toa  slice of strings, and then pass the slice as func param.
-		//it must be RunCommand(args[2], the slice)
+		var arguments []string
+		for _, arg := range args[3:] {
+			arguments = append(arguments, arg)
+		}
+		output, _ := src.RunCommand(args[2], arguments...)
+		fmt.Println(output)
+	default:
+		fmt.Println("hola")
 	}
-default:
-	fmt.Println("hola")
 }
