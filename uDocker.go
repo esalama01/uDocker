@@ -17,6 +17,6 @@ func main() {
 		output, _ := src.RunCommand(args[2], arguments...)
 		fmt.Println(output)
 	default:
-		fmt.Println("hola")
+		fmt.Println("Invalid Command")
 	}
 }
