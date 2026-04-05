@@ -21,7 +21,7 @@ func Run() {
 	cmd.Stderr = os.Stderr
 	cmd.SysProcAttr = &syscall.SysProcAttr{
 		Cloneflags: syscall.CLONE_NEWUTS | //the UTS clone call isolates the hostname
-		
+
 		 syscall.CLONE_NEWNS, //The mount (NEWNS) cllonbe sys call isolates the mount points. --> leads to changiing teh root filesystem.
 
 		//area for improvement: add cap_sys_admin.
@@ -49,6 +49,4 @@ func Child() {
 	if err != nil {
 		panic(err)
 	}
-
-	fmt.Println("Hostname updated successfully!")
 }
