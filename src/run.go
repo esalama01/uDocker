@@ -13,11 +13,12 @@ func Run() {
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.SysProcAttr = &syscall.SysProcAttr{
-		Cloneflags: syscall.CLONE_NEWUTS | //the UTS clone call isolates the hostname
+		Cloneflags: syscall.CLONE_NEWUTS | 			//the UTS clone call isolates the hostname
+					syscall.CLONE_NEWNS | 			//The mount (NEWNS) namespace call isolates the mount points. --> leads to changing the root filesystem.
+					syscall.CLONE_NEWPID, 			//The PID namespace isolates the process id.
 
-			syscall.CLONE_NEWNS, //The mount (NEWNS) cllonbe sys call isolates the mount points. --> leads to changiing teh root filesystem.
-
-		//area for improvement: add cap_sys_admin.
+		
+			//area for improvement: add cap_sys_admin.
 	}
 
 	err := cmd.Run()
@@ -35,8 +36,11 @@ func Child() {
 	cmd.Stderr = os.Stderr
 	//Setting the hostname
 	err := syscall.Sethostname([]byte("Container"))
-	syscall.Chroot("/home/esalama01/projects/uDocker/alpinefs")
+	//setting the root directory.
+	syscall.Chroot("/home/esalama01/projects/uDocker/alpinefs") //example usage after this change: sudo ./uDocker run /bin/busybox pwd.
 	os.Chdir("/")
+	//mounting the virtual fs /proc
+	syscall.Mount("/","proc","proc", 0, "")
 	if err != nil {
 		panic(err)
 	}
@@ -44,4 +48,5 @@ func Child() {
 	if err != nil {
 		panic(err)
 	}
+	syscall.Unmount("proc", 0)
 }
