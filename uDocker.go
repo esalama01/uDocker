@@ -9,7 +9,7 @@ import (
 func main() {
 	args := os.Args
 	switch args[1] {
-	case "run": //to run you need to grant the binary root access.
+	case "run": //to run you you to grant root permissions.
 		src.Run()
 	case "child":
 		src.Child()
