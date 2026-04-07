@@ -15,12 +15,26 @@ func Run() {
 	cmd.SysProcAttr = &syscall.SysProcAttr{
 		Cloneflags: syscall.CLONE_NEWUTS | //the UTS clone call isolates the hostname
 			syscall.CLONE_NEWNS | //The mount (NEWNS) namespace call isolates the mount points. --> leads to changing the root filesystem.
-			syscall.CLONE_NEWPID, //The PID namespace isolates the process id.
+			syscall.CLONE_NEWPID | //The PID namespace isolates the process id.
+			syscall.CLONE_NEWUSER,
 		Unshareflags: syscall.CLONE_NEWNS, //unshare ensures mounts are private to this namespace
 
+		UidMappings: []syscall.SysProcIDMap{
+			{
+				ContainerID  : 0,
+				HostID : os.Getuid(),
+				Size: 1,
+			},
+		},
+		GidMappings: []syscall.SysProcIDMap{
+			{
+				ContainerID  : 0,
+				HostID : os.Getuid(),
+				Size: 1,
+			},
+		},
 		//area for improvement: add cap_sys_admin.
 	}
-
 	err := cmd.Run()
 	if err != nil {
 		panic(err)
