@@ -16,9 +16,11 @@ func Run() {
 		Cloneflags: syscall.CLONE_NEWUTS | //the UTS clone call isolates the hostname
 			syscall.CLONE_NEWNS | //The mount (NEWNS) namespace call isolates the mount points. --> leads to changing the root filesystem.
 			syscall.CLONE_NEWPID | //The PID namespace isolates the process id.
-			syscall.CLONE_NEWUSER,
+			syscall.CLONE_NEWUSER, //the user namespace isolates the security related identifiers.
 		Unshareflags: syscall.CLONE_NEWNS, //unshare ensures mounts are private to this namespace
 
+
+		/* Must grant the container root privileges within itelf but looks like a normal process from the host os's perspective.*/
 		UidMappings: []syscall.SysProcIDMap{
 			{
 				ContainerID  : 0,
