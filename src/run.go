@@ -49,7 +49,7 @@ func Child() {
 
 	cmd := exec.Command(os.Args[2], os.Args[3:]...)
 	//CombinedOutput runs the command and returns its combined standard output and standard error.
-	Configure_cgroups()
+	Configure_cgroups() //cgroups are v2 not v1, the step descriptiopn is outdated tho
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr

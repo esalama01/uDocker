@@ -16,8 +16,6 @@ func main() {
 		//fmt.Printf("%v\n",runtime.NumCPU())
 	case "child":
 		src.Child()
-	case "miaw":
-		src.Configure_cgroups()
 	default:	
 		fmt.Println("Invalid Command")
 	}
