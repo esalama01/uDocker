@@ -23,17 +23,17 @@ Pulling a Layer:
 //--------------------------------------------------------------Authentication---------------------------------------------------------------------------
 
 // check if you re authorized to authenticate.
-func Check_endpoint(name string) {
+func Check_endpoint(name string) map[string]string {
 	full_path := fmt.Sprintf("https://registry-1.docker.io/v2/%s/tags/list", name)
 	resp, err := http.Get(full_path) //Check that the endpoint implements Docker Registry API V2.
 	if err != nil {
 		panic(err)
 	}
 	defer resp.Body.Close()
-	//mimic the -i flag result. --> outputs a map with keys
+	//mimic the -i flag result. --> outputs a map with keys Bearer realm, scope and service.
 	//for name, values := range resp.Header {
+	m := make(map[string]string)
 	for _, value := range resp.Header["Www-Authenticate"] { //p.Header["Www-Authenticate"] is an array of strings.
-		m := make(map[string]string)
 		pairs := strings.Split(value, ",")
 		for _, pair := range pairs {
 			kv := strings.Split(pair, "=")
@@ -41,18 +41,18 @@ func Check_endpoint(name string) {
 				m[kv[0]] = kv[1]
 			}
 		}
-		fmt.Println(m)
 	}
 	//}
-	fmt.Println()
+	return m
 	//body, _ := io.ReadAll(resp.Body)
 	//return string(body)
 }
 
 //If not, ask for a token.
 
-func Request_token() {
-
+func Request_token(attrs map[string]string) {
+	full_path := fmt.Sprintf("%s?service=%s&scope=%s", attrs["Bearer realm"], attrs["service"], attrs["scope"])
+	fmt.Println(full_path)
 }
 
 //i need to go back to https://distribution.github.io/distribution/spec/api/
