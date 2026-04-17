@@ -18,9 +18,10 @@ func main() {
 		//fmt.Printf("%v\n",runtime.NumCPU())
 	case "child":
 		src.Child()
+	///*
 	case "miaw":
-		mido := src.Check_endpoint()
-		fmt.Printf("%v\n", mido)
+		src.Check_endpoint("hello-world")
+		//*/
 	default:
 		fmt.Println("Invalid Command")
 	}
