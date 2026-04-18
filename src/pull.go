@@ -1,10 +1,11 @@
 package src
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 
-	"io"
+	//"io"
 	"net/http"
 )
 
@@ -20,7 +21,10 @@ Pulling a Layer:
 
 */
 
-//--------------------------------------------------------------Authentication---------------------------------------------------------------------------
+// --------------------------------------------------------------Authentication---------------------------------------------------------------------------
+type TokenResponse struct {
+	Token string `json:"token"`
+}
 
 // check if you re authorized to authenticate.
 func Check_endpoint(name string) map[string]string {
@@ -33,16 +37,18 @@ func Check_endpoint(name string) map[string]string {
 	//mimic the -i flag result. --> outputs a map with keys Bearer realm, scope and service.
 	//for name, values := range resp.Header {
 	m := make(map[string]string)
-	for _, value := range resp.Header["Www-Authenticate"] { //p.Header["Www-Authenticate"] is an array of strings.
-		pairs := strings.Split(value, ",")
-		for _, pair := range pairs {
-			kv := strings.Split(pair, "=")
-			if len(kv) == 2 {
-				m[kv[0]] = kv[1]
-			}
+	authHeader := resp.Header.Get("Www-Authenticate")
+
+	trimmedHeader := strings.TrimPrefix(authHeader, "Bearer ")
+	pairs := strings.Split(trimmedHeader, ",")
+	for _, pair := range pairs {
+		kv := strings.Split(pair, "=")
+		if len(kv) == 2 {
+			key := strings.TrimSpace(kv[0])
+			val := strings.Trim(strings.TrimSpace(kv[1]), "\"")
+			m[key] = val
 		}
 	}
-	//}
 	return m
 	//body, _ := io.ReadAll(resp.Body)
 	//return string(body)
@@ -52,7 +58,7 @@ func Check_endpoint(name string) map[string]string {
 
 func Request_token(attrs map[string]string) string {
 	//The blueprint for requesting a token(supposi que 3and www headers.) --> The_val_of_bearer_realm + "?" +"service=" + The_val_of_service + "&" + "scope=" + val_of_repository
-	full_path := fmt.Sprintf("%s?service=%s&scope=%s", attrs["Bearer realm"], attrs["service"], attrs["scope"])
+	full_path := fmt.Sprintf("%s?service=%s&scope=%s", attrs["realm"], attrs["service"], attrs["scope"])
 	//i need to delete the "'s
 	full_path = strings.ReplaceAll(full_path, `"`, "")
 	resp, err := http.Get(full_path) //Check that the endpoint implements Docker Registry API V2.
@@ -60,21 +66,32 @@ func Request_token(attrs map[string]string) string {
 		panic(err)
 	}
 	defer resp.Body.Close()
-	body, _ := io.ReadAll(resp.Body)
-	full_token := string(body)
-	//i need to filter the access token from the response.
-	before, _, _ := strings.Cut(full_token, `","access_token`)
-	_, after, _ := strings.Cut(before, `{"token":"`)
+	var tokenRes TokenResponse
+	if err := json.NewDecoder(resp.Body).Decode(&tokenRes); err != nil {
+		panic(err)
+	}
 
-	/*
-		print(full_token)
-		print(before)
-		print("\n------------------------------------------------------------------------\n")
-		fmt.Print(ba3d)
-		print("\n------------------------------------------------------------------------\n")
-	*/
+	return tokenRes.Token
+}
 
-	return after
+func Authenticate(name string) int {
+	if !strings.Contains(name, "/") {
+		name = "library/" + name
+	}
+	m := Check_endpoint(name)
+	token := Request_token(m)
+	full_path := fmt.Sprintf("https://registry-1.docker.io/v2/%s/tags/list", name)
+	req, err := http.NewRequest("GET", full_path, nil)
+	if err != nil {
+		panic(err)
+	}
+
+	// 2. Set the headers (equivalent to -H)
+	req.Header.Set("Authorization", "Bearer "+token)
+	// 3. Send the request
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	return resp.StatusCode
 }
 
 //i need to go back to https://distribution.github.io/distribution/spec/api/

@@ -20,8 +20,8 @@ func main() {
 		src.Child()
 	///*
 	case "miaw":
-		m := src.Check_endpoint("hello-world")
-		src.Request_token(m)
+		m := src.Authenticate("hello-world")
+		fmt.Print(m)
 	//*/
 	default:
 		fmt.Println("Invalid Command")
