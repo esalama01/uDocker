@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	//"io"
+	"io"
 	"net/http"
 )
 
@@ -50,9 +50,31 @@ func Check_endpoint(name string) map[string]string {
 
 //If not, ask for a token.
 
-func Request_token(attrs map[string]string) {
+func Request_token(attrs map[string]string) string {
+	//The blueprint for requesting a token(supposi que 3and www headers.) --> The_val_of_bearer_realm + "?" +"service=" + The_val_of_service + "&" + "scope=" + val_of_repository
 	full_path := fmt.Sprintf("%s?service=%s&scope=%s", attrs["Bearer realm"], attrs["service"], attrs["scope"])
-	fmt.Println(full_path)
+	//i need to delete the "'s
+	full_path = strings.ReplaceAll(full_path, `"`, "")
+	resp, err := http.Get(full_path) //Check that the endpoint implements Docker Registry API V2.
+	if err != nil {
+		panic(err)
+	}
+	defer resp.Body.Close()
+	body, _ := io.ReadAll(resp.Body)
+	full_token := string(body)
+	//i need to filter the access token from the response.
+	before, _, _ := strings.Cut(full_token, `","access_token`)
+	_, after, _ := strings.Cut(before, `{"token":"`)
+
+	/*
+		print(full_token)
+		print(before)
+		print("\n------------------------------------------------------------------------\n")
+		fmt.Print(ba3d)
+		print("\n------------------------------------------------------------------------\n")
+	*/
+
+	return after
 }
 
 //i need to go back to https://distribution.github.io/distribution/spec/api/
