@@ -94,4 +94,24 @@ func Authenticate(name string) int {
 	return resp.StatusCode
 }
 
+func Manifest(name, ref string) int { //a function for pulling an image manifest.
+	if !strings.Contains(name, "/") {
+		name = "library/" + name
+	}
+	m := Check_endpoint(name)
+	token := Request_token(m)
+	full_path := fmt.Sprintf("https://registry-1.docker.io/v2/%s/manifests/%s", name, ref)
+	req, err := http.NewRequest("GET", full_path, nil)
+	if err != nil {
+		panic(err)
+	}
+
+	// 2. Set the headers (equivalent to -H)
+	req.Header.Set("Authorization", "Bearer "+token)
+	// 3. Send the request
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	return resp.StatusCode
+}
+
 //i need to go back to https://distribution.github.io/distribution/spec/api/

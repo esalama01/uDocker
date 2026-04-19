@@ -20,7 +20,7 @@ func main() {
 		src.Child()
 	///*
 	case "miaw":
-		m := src.Authenticate("hello-world")
+		m := src.Manifest("hello-world", "latest")
 		fmt.Print(m)
 	//*/
 	default:
