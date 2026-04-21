@@ -28,3 +28,5 @@ func main() {
 		fmt.Println("Invalid Command")
 	}
 }
+
+//// now i need to convert a list of layers into an actual filesys
