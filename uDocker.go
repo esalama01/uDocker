@@ -20,9 +20,8 @@ func main() {
 		src.Child()
 	///*
 	case "miaw":
-		m := src.Manifest("hello-world", "latest")
-		j := src.Manifest_image("hello-world", m)
-		fmt.Print(j)
+		m := src.Manifest_sha("hello-world", "latest")
+		fmt.Print(m)
 		fmt.Print("\n")
 	//*/
 	default:

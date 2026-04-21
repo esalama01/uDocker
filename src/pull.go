@@ -136,13 +136,13 @@ func Authenticate(name string) int {
 	return resp.StatusCode
 }
 
-func Manifest(name, ref string) string { //a function for pulling an image manifest. (ref must be a tag. return is a sha256)
+func Manifest(name, tag string) string { //a function for pulling an image manifest. (ref must be a tag. return is a sha256)
 	if !strings.Contains(name, "/") {
 		name = "library/" + name
 	}
 	m := Check_endpoint(name)
 	token := Request_token(m)
-	full_path := fmt.Sprintf("https://registry-1.docker.io/v2/%s/manifests/%s", name, ref)
+	full_path := fmt.Sprintf("https://registry-1.docker.io/v2/%s/manifests/%s", name, tag)
 	req, err := http.NewRequest("GET", full_path, nil)
 	if err != nil {
 		panic(err)
@@ -191,7 +191,7 @@ func Manifest(name, ref string) string { //a function for pulling an image manif
 	return shaa256
 }
 
-func Manifest_image(name, digest string) []Img_Layer{
+func Manifest_sha256(name, digest string) []Img_Layer{
 	if !strings.Contains(name, "/") {
 		name = "library/" + name
 	}
@@ -217,5 +217,11 @@ func Manifest_image(name, digest string) []Img_Layer{
 	}
 	defer resp.Body.Close() 
 	return data.Layers
+}
+
+func Manifest_sha(name, ref string) []Img_Layer{
+	sha_str := Manifest(name, ref)
+	img_lyr := Manifest_sha256(name, sha_str)
+	return img_lyr
 }
 //i need to go back to https://distribution.github.io/distribution/spec/api/
