@@ -22,6 +22,7 @@ func main() {
 	case "miaw":
 		m := src.Manifest("hello-world", "latest")
 		fmt.Print(m)
+		fmt.Print("\n")
 	//*/
 	default:
 		fmt.Println("Invalid Command")
