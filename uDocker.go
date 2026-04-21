@@ -21,7 +21,8 @@ func main() {
 	///*
 	case "miaw":
 		m := src.Manifest("hello-world", "latest")
-		fmt.Print(m)
+		j := src.Manifest_image("hello-world", m)
+		fmt.Print(j)
 		fmt.Print("\n")
 	//*/
 	default:
