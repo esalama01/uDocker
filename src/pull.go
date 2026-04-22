@@ -1,6 +1,9 @@
 package src
 
 import (
+	"path/filepath"
+	"compress/gzip"
+	"archive/tar"
 	"encoding/json"
 	"fmt"
 	"strings"
@@ -251,6 +254,58 @@ func Pull_layers(name string , layers []Img_Layer) {		//GET /v2/<name>/blobs/<di
 		defer resp.Body.Close() // Essential for connection reuse
 		io.Copy(out, resp.Body)
 	}
+}
+
+func ExtractTarGz(source, targetDir string) error {
+	f, err := os.Open(source)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	gzr, err := gzip.NewReader(f)
+	if err != nil {
+		return err
+	}
+	defer gzr.Close()
+
+	tr := tar.NewReader(gzr)
+
+	for {
+		header, err := tr.Next()
+		if err == io.EOF {
+			break // End of archive
+		}
+		if err != nil {
+			return err
+		}
+
+		// Prevent Zip Slip vulnerability by cleaning the path
+		target := filepath.Join(targetDir, header.Name)
+
+		switch header.Typeflag {
+		case tar.TypeDir:
+			if err := os.MkdirAll(target, 0755); err != nil {
+				return err
+			}
+		case tar.TypeReg:
+			// Ensure parent directory exists
+			if err := os.MkdirAll(filepath.Dir(target), 0755); err != nil {
+				return err
+			}
+			
+			outFile, err := os.Create(target)
+			if err != nil {
+				return err
+			}
+			if _, err := io.Copy(outFile, tr); err != nil {
+				outFile.Close()
+				return err
+			}
+			outFile.Close()
+		}
+	}
+	return nil
 }
 
 
