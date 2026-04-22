@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"strings"
 	"time"
-
-	//"io"
+	"os"
+	"io"
 	"net/http"
 )
 
@@ -224,4 +224,34 @@ func Manifest_sha(name, ref string) []Img_Layer{
 	img_lyr := Manifest_sha256(name, sha_str)
 	return img_lyr
 }
+
+func Pull_layers(name string , layers []Img_Layer) {		//GET /v2/<name>/blobs/<digest>
+	if !strings.Contains(name, "/") {
+		name = "library/" + name
+	}
+	out, _ := os.Create("layer.tar.gz")
+	defer out.Close()
+	m := Check_endpoint(name)
+	token := Request_token(m)
+	for _, u := range layers{
+		full_path := fmt.Sprintf("https://registry-1.docker.io/v2/%s/blobs/%s", name, u.Digest)
+		req, err := http.NewRequest("GET", full_path, nil)
+		if err != nil {
+			panic(err)
+		}
+
+		// 2. Set the headers (equivalent to -H)
+		req.Header.Set("Authorization", "Bearer "+token)
+		// 3. Send the request
+		client := &http.Client{}
+		resp, err := client.Do(req)
+		if err != nil {
+    		panic(err)
+		}
+		defer resp.Body.Close() // Essential for connection reuse
+		io.Copy(out, resp.Body)
+	}
+}
+
+
 //i need to go back to https://distribution.github.io/distribution/spec/api/

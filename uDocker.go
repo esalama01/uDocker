@@ -21,6 +21,7 @@ func main() {
 	///*
 	case "miaw":
 		m := src.Manifest_sha("hello-world", "latest")
+		src.Pull_layers("mongo", m)
 		fmt.Print(m)
 		fmt.Print("\n")
 	//*/
