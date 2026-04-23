@@ -252,8 +252,8 @@ func Pull_layers(name string , layers []Img_Layer) {		//GET /v2/<name>/blobs/<di
 		}
 		tempFileName := "temp_layer.tar.gz"
 		out, _ := os.Create(tempFileName)
-		defer out.Close()
-		defer resp.Body.Close() // Essential for connection reuse
+		out.Close()
+		resp.Body.Close() // Essential for connection reuse
 		io.Copy(out, resp.Body)
 		ExtractTarGz(tempFileName, "./output")
 		os.Remove(tempFileName) // Clean up the temporary file after extraction.
