@@ -4,7 +4,7 @@ A custom, minimal container runtime written in Go, built to understand the core 
 
 It is **not** production software. It is a learning tool that should be run inside a Linux virtual machine or on a bare-metal Linux host.
 
-## Completed Steps (challenge mapping)
+## Completed Steps 
 
 The challenge is split into eight steps. The table below shows which steps are complete and where the relevant code lives.
 
@@ -21,7 +21,7 @@ The challenge is split into eight steps. The table below shows which steps are c
 | 8 | Run the pulled image | **Partially complete** | `src/run.go` uses `/home/esalama01/projects/uDocker/output` as root |
 | 8 | **Environment variables from image config** | **Not yet implemented** | – |
 
-## What is missing (Step 8 – environment variables)
+## What is missing
 
 The challenge specification asks that after pulling an image the runtime should parse the container’s configuration (the `Config` blob saved during Step 7) and set the environment variables and working directory before executing the command. The image configuration is fully fetched and parsed in `src/pull.go` (`Config_structure`, `confiiiig_struct`), and the runtime already chroots into `/home/esalama01/projects/uDocker/output`, but:
 
