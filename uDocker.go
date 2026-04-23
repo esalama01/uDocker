@@ -20,8 +20,7 @@ func main() {
 		src.Child()
 	///*
 	case "miaw":
-		m := src.Manifest_sha("hello-world", "latest")
-		src.Pull_layers("hello-world", m)
+		m := src.Configgg("hello-world", "latest")
 		fmt.Print(m)
 		fmt.Print("\n")
 	//*/
