@@ -24,10 +24,6 @@ func main() {
 		src.Pull_layers("hello-world", m)
 		fmt.Print(m)
 		fmt.Print("\n")
-	case "miaaaw":
-		if err := src.ExtractTarGz("layer.tar.gz", "./output"); err != nil {
-			panic(err)
-		}
 	//*/
 	default:
 		fmt.Println("Invalid Command")

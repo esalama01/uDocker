@@ -232,8 +232,7 @@ func Pull_layers(name string , layers []Img_Layer) {		//GET /v2/<name>/blobs/<di
 	if !strings.Contains(name, "/") {
 		name = "library/" + name
 	}
-	out, _ := os.Create("layer.tar.gz")
-	defer out.Close()
+	
 	m := Check_endpoint(name)
 	token := Request_token(m)
 	for _, u := range layers{
@@ -251,8 +250,13 @@ func Pull_layers(name string , layers []Img_Layer) {		//GET /v2/<name>/blobs/<di
 		if err != nil {
     		panic(err)
 		}
+		tempFileName := "temp_layer.tar.gz"
+		out, _ := os.Create(tempFileName)
+		defer out.Close()
 		defer resp.Body.Close() // Essential for connection reuse
 		io.Copy(out, resp.Body)
+		ExtractTarGz(tempFileName, "./output")
+		os.Remove(tempFileName) // Clean up the temporary file after extraction.
 	}
 }
 
