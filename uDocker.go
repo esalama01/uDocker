@@ -19,11 +19,9 @@ func main() {
 	case "child":
 		src.Child()
 	///*
-	case "miaw":
-		m := src.Configgg("hello-world", "latest")
-		fmt.Print(m)
-		fmt.Print("\n")
-	//*/
+	case "pull":
+		src.Pull(args[2], args[3])
+		//*/
 	default:
 		fmt.Println("Invalid Command")
 	}

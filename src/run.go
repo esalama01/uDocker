@@ -46,7 +46,6 @@ func Run() {
 }
 
 func Child() {
-
 	cmd := exec.Command(os.Args[2], os.Args[3:]...)
 	//CombinedOutput runs the command and returns its combined standard output and standard error.
 	Configure_cgroups() //cgroups are v2 not v1, the step descriptiopn is outdated tho
@@ -56,7 +55,7 @@ func Child() {
 	//Setting the hostname
 	err := syscall.Sethostname([]byte("Container"))
 	//setting the root directory.
-	syscall.Chroot("/home/esalama01/projects/uDocker/alpinefs") //example usage after this change: sudo ./uDocker run /bin/busybox pwd.
+	syscall.Chroot("/home/esalama01/projects/uDocker/output") //example usage after this change: sudo ./uDocker run /bin/busybox pwd.
 	os.Chdir("/")
 	//mounting the virtual fs /proc
 	syscall.Mount("proc", "proc", "proc", 0, "")

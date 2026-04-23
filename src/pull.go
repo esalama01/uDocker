@@ -245,7 +245,7 @@ func Manifest_sha256(name, digest string) []Img_Layer {
 	return data.Layers
 }
 
-func Manifest_shaw256(name, digest string) Configg {
+func Manifest_shaw256(name, digest string) Configg { //for the config
 	if !strings.Contains(name, "/") {
 		name = "library/" + name
 	}
@@ -309,6 +309,12 @@ func Pull_layers(name string, layers []Img_Layer) { //GET /v2/<name>/blobs/<dige
 		ExtractTarGz(tempFileName, "./output")
 		os.Remove(tempFileName) // Clean up the temporary file after extraction.
 	}
+}
+
+func Pull(name, ref string) {
+	m := Manifest_sha(name, ref)
+	Pull_layers(name, m)
+
 }
 
 func ExtractTarGz(source, targetDir string) error {

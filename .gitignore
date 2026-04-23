@@ -1,3 +1,4 @@
 alpinefs/
 uDocker
 go.sum
+output/
