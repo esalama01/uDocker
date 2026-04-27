@@ -103,23 +103,10 @@ After pulling an image (see “Pulling an image” below), you can run commands 
 
 ### Pulling an image
 
-Pulling is not exposed as a separate CLI command. The pull logic lives in `src/pull.go` and must be invoked from a test or a small helper. To use it, write a short Go program that calls the exported pull functions:
-
-```go
-package main
-
-import "uDocker/src"
-
-func main() {
-    // downloads and extracts to ..., the current code writes to ./output
-    src.Pull("ubuntu") 
-}
-```
-
-Then run:
+Pulling is exposed as a separate CLI command. The pull logic lives in `src/pull.go` and must be invoked from a test or a small helper. To use it:
 
 ```bash
-go run .
+go pull image_name image_reference .
 ```
 
 This will fetch the `ubuntu` image (or any other public image) from Docker Hub and unpack its layers.
