@@ -117,7 +117,6 @@ The cgroup implementation is written for **cgroups v2** (unified hierarchy). The
 
 ## Limitations (beyond the challenge)
 
-* **No command-line arguments for image name or tag.** The runtime uses hardcoded values when pulling.
 * **No networking namespace.** Containers share the host network stack.
 * **No image caching.** Every pull re-downloads all layers.
 * **No cleanup of temporary directories.** Downloaded layers remain on disk.
